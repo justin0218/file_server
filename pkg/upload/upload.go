@@ -48,7 +48,7 @@ func CompressedImage(src []byte, format string) (after []byte, err error) {
 			return
 		}
 		buf := new(bytes.Buffer)
-		err = jpeg.Encode(buf, img, &jpeg.Options{Quality: 95})
+		err = jpeg.Encode(buf, img, &jpeg.Options{Quality: 10})
 		if err != nil {
 			return
 		}
