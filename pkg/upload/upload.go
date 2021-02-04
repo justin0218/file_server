@@ -5,10 +5,8 @@ import (
 	"file_server/api/proto"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/nfnt/resize"
 	"image"
 	"image/jpeg"
-	"image/png"
 	"os"
 )
 
@@ -46,7 +44,7 @@ func CompressedImage(src []byte, format string) (after []byte, err error) {
 		return
 	}
 	var img image.Image
-	if format == "jpg" || format == "jpeg" {
+	if format == "jpg" || format == "jpeg" || format == "png" {
 		img, err = jpeg.Decode(bytes.NewBuffer(src))
 		if err != nil {
 			return
@@ -58,24 +56,24 @@ func CompressedImage(src []byte, format string) (after []byte, err error) {
 		}
 		after = buf.Bytes()
 		return
-	} else if format == "png" {
-		img, err = png.Decode(bytes.NewBuffer(src))
-		if err != nil {
-			return
-		}
-		imgConf, e := png.DecodeConfig(bytes.NewBuffer(src))
-		if e != nil {
-			err = e
-			return
-		}
-		img = resize.Thumbnail(uint(imgConf.Width), uint(imgConf.Height), img, resize.Lanczos3)
-		buf := new(bytes.Buffer)
-		err = png.Encode(buf, img)
-		after = buf.Bytes()
-		return
-	} else {
-		after = src
-		return
-	}
+	} //else if format == "png" {
+	//img, err = png.Decode(bytes.NewBuffer(src))
+	//if err != nil {
+	//	return
+	//}
+	//imgConf, e := png.DecodeConfig(bytes.NewBuffer(src))
+	//if e != nil {
+	//	err = e
+	//	return
+	//}
+	//img = resize.Thumbnail(uint(imgConf.Width), uint(imgConf.Height), img, resize.Lanczos3)
+	//buf := new(bytes.Buffer)
+	//err = png.Encode(buf, img)
+	//after = buf.Bytes()
+	//return
+	// else {
+	after = src
+	//return
+	//}
 	return
 }
