@@ -5,10 +5,8 @@ import (
 	"file_server/api/proto"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/nfnt/resize"
 	"image"
 	"image/jpeg"
-	"image/png"
 	"os"
 )
 
@@ -41,8 +39,12 @@ func Local(fileName string, src []byte) (ret *proto.UploadLocalRes, err error) {
 }
 
 func CompressedImage(src []byte, format string) (after []byte, err error) {
+	if len(src)/1024 < 100 { //100k以内不优化
+		after = src
+		return
+	}
 	var img image.Image
-	if format == "jpg" || format == "jpeg" {
+	if format == "jpg" || format == "jpeg" || format == "png" {
 		img, err = jpeg.Decode(bytes.NewBuffer(src))
 		if err != nil {
 			return
@@ -54,16 +56,7 @@ func CompressedImage(src []byte, format string) (after []byte, err error) {
 		}
 		after = buf.Bytes()
 		return
-	} else if format == "png" {
-		img, err = png.Decode(bytes.NewBuffer(src))
-		img = resize.Thumbnail(100, 100, img, resize.Lanczos3)
-		buf := new(bytes.Buffer)
-		err = png.Encode(buf, img)
-		after = buf.Bytes()
-		return
-	} else {
-		after = src
-		return
 	}
+	after = src
 	return
 }
